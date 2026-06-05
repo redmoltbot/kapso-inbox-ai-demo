@@ -33,17 +33,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  // Debug: always save raw payload so we can inspect it in Supabase
   waitUntil((async () => {
     const supabase = createServerClient()
-    await supabase.from('messages').insert({
+    const { error: dbgErr } = await supabase.from('messages').insert({
       conversation_id: '_debug',
       from_number: '_debug',
       to_number: '_debug',
-      body: JSON.stringify(body),
+      body: JSON.stringify(body).slice(0, 2000),
       direction: 'inbound',
       raw: body,
     })
+    if (dbgErr) console.error('[webhook] debug insert error:', JSON.stringify(dbgErr))
+    else console.log('[webhook] debug row inserted OK')
     await processWebhook(body)
   })())
 
