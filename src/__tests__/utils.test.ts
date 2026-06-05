@@ -12,47 +12,41 @@ describe('getConversationId', () => {
 })
 
 describe('parseWebhookMessages', () => {
-  it('extracts messages from a Meta webhook payload', () => {
+  it('extracts a message from a Kapso webhook payload', () => {
     const payload = {
-      object: 'whatsapp_business_account',
-      entry: [{
-        changes: [{
-          field: 'messages',
-          value: {
-            metadata: { phone_number_id: '1192487380606031' },
-            messages: [{
-              id: 'wamid.abc123',
-              from: '60123456789',
-              timestamp: '1717574400',
-              type: 'text',
-              text: { body: 'Hello!' },
-            }],
-          },
-        }],
-      }],
+      message: {
+        id: 'wamid.abc123',
+        from: '60123456789',
+        timestamp: '1717574400',
+        type: 'text',
+        text: { body: 'Hello!' },
+        kapso: { direction: 'inbound' },
+      },
+      phone_number_id: '1192487380606031',
+      conversation: { phone_number: '60123456789' },
     }
 
     const result = parseWebhookMessages(payload)
     expect(result).toHaveLength(1)
     expect(result[0].fromNumber).toBe('60123456789')
+    expect(result[0].toNumber).toBe('1192487380606031')
     expect(result[0].body).toBe('Hello!')
+    expect(result[0].direction).toBe('inbound')
+    expect(result[0].timestamp).toBe('1717574400')
+    expect(result[0].rawMessageId).toBe('wamid.abc123')
+  })
+
+  it('treats missing kapso.direction as inbound', () => {
+    const payload = {
+      message: { id: 'wamid.x', from: '60123456789', timestamp: '1717574400', text: { body: 'hi' } },
+      phone_number_id: '1192487380606031',
+    }
+    const result = parseWebhookMessages(payload)
     expect(result[0].direction).toBe('inbound')
   })
 
-  it('returns empty array for status-only payloads', () => {
-    const payload = {
-      object: 'whatsapp_business_account',
-      entry: [{
-        changes: [{
-          field: 'messages',
-          value: {
-            metadata: { phone_number_id: '1192487380606031' },
-            statuses: [{ id: 'wamid.abc', status: 'delivered' }],
-          },
-        }],
-      }],
-    }
-    expect(parseWebhookMessages(payload)).toHaveLength(0)
+  it('returns empty array when message object is missing', () => {
+    expect(parseWebhookMessages({ phone_number_id: '123' })).toHaveLength(0)
   })
 
   it('returns empty array for unknown payloads', () => {

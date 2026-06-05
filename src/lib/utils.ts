@@ -24,44 +24,32 @@ export function getConversationId(
   return direction === 'inbound' ? fromNumber : toNumber
 }
 
+// Kapso webhook format: { message: { from, text, timestamp, kapso: { direction } }, phone_number_id }
 export function parseWebhookMessages(payload: unknown): ParsedWebhookMessage[] {
   if (!payload || typeof payload !== 'object') return []
 
   const p = payload as Record<string, unknown>
-  const entries = Array.isArray(p.entry) ? p.entry : []
-  const results: ParsedWebhookMessage[] = []
 
-  for (const entry of entries) {
-    const changes = Array.isArray((entry as Record<string, unknown>).changes)
-      ? ((entry as Record<string, unknown>).changes as unknown[])
-      : []
+  // Must have a message object with a from field
+  if (!p.message || typeof p.message !== 'object') return []
 
-    for (const change of changes) {
-      const value = (change as Record<string, unknown>).value as Record<string, unknown> | undefined
-      if (!value) continue
+  const msg = p.message as Record<string, unknown>
+  const fromNumber = (msg.from as string) ?? ''
+  if (!fromNumber) return []
 
-      const messages = Array.isArray(value.messages) ? value.messages : []
-      const meta = (value.metadata as Record<string, unknown>) ?? {}
-      const toNumber = (meta.phone_number_id as string) ?? ''
+  const toNumber = (p.phone_number_id as string) ?? ''
+  const timestamp = (msg.timestamp as string) ?? ''
+  const textObj = msg.text as Record<string, unknown> | undefined
+  const body = (textObj?.body as string) ?? null
+  const kapso = msg.kapso as Record<string, unknown> | undefined
+  const direction: Direction = (kapso?.direction as Direction) === 'outbound' ? 'outbound' : 'inbound'
 
-      for (const msg of messages) {
-        const m = msg as Record<string, unknown>
-        const fromNumber = (m.from as string) ?? ''
-        const timestamp = (m.timestamp as string) ?? new Date().toISOString()
-        const textObj = m.text as Record<string, unknown> | undefined
-        const body = (textObj?.body as string) ?? null
-
-        results.push({
-          fromNumber,
-          toNumber,
-          body,
-          direction: 'inbound',
-          timestamp,
-          rawMessageId: (m.id as string) ?? '',
-        })
-      }
-    }
-  }
-
-  return results
+  return [{
+    fromNumber,
+    toNumber,
+    body,
+    direction,
+    timestamp,
+    rawMessageId: (msg.id as string) ?? '',
+  }]
 }

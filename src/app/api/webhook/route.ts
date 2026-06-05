@@ -33,20 +33,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  waitUntil((async () => {
-    const supabase = createServerClient()
-    const { error: dbgErr } = await supabase.from('messages').insert({
-      conversation_id: '_debug',
-      from_number: '_debug',
-      to_number: '_debug',
-      body: JSON.stringify(body).slice(0, 2000),
-      direction: 'inbound',
-      raw: body,
-    })
-    if (dbgErr) console.error('[webhook] debug insert error:', JSON.stringify(dbgErr))
-    else console.log('[webhook] debug row inserted OK')
-    await processWebhook(body)
-  })())
+  waitUntil(processWebhook(body))
 
   return new NextResponse('OK', { status: 200 })
 }
