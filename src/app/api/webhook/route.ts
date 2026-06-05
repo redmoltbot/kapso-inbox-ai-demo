@@ -3,6 +3,8 @@ import { waitUntil } from '@vercel/functions'
 import { createServerClient } from '@/lib/supabase-server'
 import { parseWebhookMessages, getConversationId } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 async function processWebhook(raw: unknown): Promise<void> {
   const messages = parseWebhookMessages(raw)
   if (messages.length === 0) return

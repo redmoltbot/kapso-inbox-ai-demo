@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase-server'
 import { getConversationId } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 const KAPSO_API_KEY = process.env.KAPSO_API_KEY!
 const KAPSO_PHONE_NUMBER_ID = process.env.KAPSO_PHONE_NUMBER_ID!
 const KAPSO_SEND_URL = `https://api.kapso.ai/meta/whatsapp/v17.0/${KAPSO_PHONE_NUMBER_ID}/messages`
