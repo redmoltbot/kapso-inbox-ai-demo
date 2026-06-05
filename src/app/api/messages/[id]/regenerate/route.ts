@@ -6,15 +6,15 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { conversationId: string; messageId: string } },
+  { params }: { params: { id: string } },
 ) {
-  const { messageId } = params
+  const { id } = params
   const supabase = createServerClient()
 
   const { data: message, error } = await supabase
     .from('messages')
     .select('body')
-    .eq('id', messageId)
+    .eq('id', id)
     .single()
 
   if (error || !message?.body) {
@@ -22,7 +22,7 @@ export async function POST(
   }
 
   try {
-    await generateAiDraft(messageId, message.body)
+    await generateAiDraft(id, message.body)
   } catch (err) {
     console.error('[regenerate] failed', err)
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 })
@@ -31,7 +31,7 @@ export async function POST(
   const { data: updated } = await supabase
     .from('messages')
     .select('ai_draft')
-    .eq('id', messageId)
+    .eq('id', id)
     .single()
 
   return NextResponse.json({ draft: updated?.ai_draft ?? '' })
