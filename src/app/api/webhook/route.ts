@@ -43,9 +43,10 @@ async function processWebhook(raw: unknown): Promise<void> {
 
 async function verifySignature(rawBody: string, signature: string | null): Promise<boolean> {
   const secret = process.env.KAPSO_WEBHOOK_SECRET
-  if (!secret) return true // skip verification if secret not configured
+  if (!secret) return true // skip if secret not configured
+  if (!signature) return true // skip if Kapso doesn't send signature header
 
-  if (!signature?.startsWith('sha256=')) return false
+  if (!signature.startsWith('sha256=')) return false
 
   const encoder = new TextEncoder()
   const key = await crypto.subtle.importKey(
