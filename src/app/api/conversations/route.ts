@@ -21,6 +21,8 @@ export async function GET() {
     .order('conversation_id', { ascending: true })
     .order('timestamp', { ascending: false })
 
+  console.log('[conversations] data:', JSON.stringify(data), 'error:', JSON.stringify(error), 'url:', process.env.SUPABASE_URL?.length, 'key_len:', process.env.SUPABASE_ANON_KEY?.length)
+
   if (error) {
     console.error('[conversations] query error:', error)
     return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })
