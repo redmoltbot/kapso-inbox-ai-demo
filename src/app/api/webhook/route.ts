@@ -68,12 +68,6 @@ export async function POST(request: Request) {
   const rawBody = await request.text()
   const signature = request.headers.get('x-hub-signature-256')
 
-  // Log all headers to diagnose what Kapso actually sends
-  const headerMap: Record<string, string> = {}
-  request.headers.forEach((v, k) => { headerMap[k] = v })
-  console.log('[webhook] headers:', JSON.stringify(headerMap))
-  console.log('[webhook] signature header:', signature)
-
   if (!(await verifySignature(rawBody, signature))) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
