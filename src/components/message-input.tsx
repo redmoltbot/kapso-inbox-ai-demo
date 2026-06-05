@@ -1,19 +1,27 @@
 'use client'
 
-import { useState, useRef, KeyboardEvent } from 'react'
+import { useState, useRef, useEffect, KeyboardEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SendHorizonal } from 'lucide-react'
 
 interface MessageInputProps {
   conversationId: string
+  injectedText?: string | null
   onSent?: () => void
 }
 
-export function MessageInput({ conversationId, onSent }: MessageInputProps) {
+export function MessageInput({ conversationId, injectedText, onSent }: MessageInputProps) {
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (injectedText) {
+      setText(injectedText)
+      inputRef.current?.focus()
+    }
+  }, [injectedText])
 
   async function send() {
     const trimmed = text.trim()

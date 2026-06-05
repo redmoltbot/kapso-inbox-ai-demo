@@ -11,6 +11,7 @@ export default function InboxPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [loadingMessages, setLoadingMessages] = useState(false)
+  const [pendingDraft, setPendingDraft] = useState<string | null>(null)
 
   const loadConversations = useCallback(async () => {
     const res = await fetch('/api/conversations')
@@ -40,7 +41,6 @@ export default function InboxPage() {
     }
   }, [selectedId, loadMessages])
 
-  // Refresh conversation list when new messages arrive (inbound via webhook)
   useEffect(() => {
     const supabase = getBrowserClient()
     const channel = supabase
@@ -58,11 +58,11 @@ export default function InboxPage() {
   function handleSelectConversation(id: string) {
     setSelectedId(id)
     setMessages([])
+    setPendingDraft(null)
   }
 
   return (
     <div className="flex h-full">
-      {/* Left panel — conversation list */}
       <div className="w-80 shrink-0 flex flex-col">
         <ConversationList
           conversations={conversations}
@@ -71,16 +71,13 @@ export default function InboxPage() {
         />
       </div>
 
-      {/* Right panel — messages */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {selectedId ? (
           <>
-            {/* Header */}
             <div className="px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
               <p className="font-medium text-gray-900">{selectedId}</p>
             </div>
 
-            {/* Messages */}
             {loadingMessages ? (
               <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
                 Loading…
@@ -90,12 +87,13 @@ export default function InboxPage() {
                 key={selectedId}
                 conversationId={selectedId}
                 initialMessages={messages}
+                onUseDraft={(text) => setPendingDraft(text)}
               />
             )}
 
-            {/* Input */}
             <MessageInput
               conversationId={selectedId}
+              injectedText={pendingDraft}
               onSent={loadConversations}
             />
           </>
