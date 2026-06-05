@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ConversationList, Conversation } from '@/components/conversation-list'
 import { MessagePanel, Message } from '@/components/message-panel'
 import { MessageInput } from '@/components/message-input'
+import { getBrowserClient } from '@/lib/supabase-browser'
 
 export default function InboxPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -38,6 +39,21 @@ export default function InboxPage() {
       loadMessages(selectedId)
     }
   }, [selectedId, loadMessages])
+
+  // Refresh conversation list when new messages arrive (inbound via webhook)
+  useEffect(() => {
+    const supabase = getBrowserClient()
+    const channel = supabase
+      .channel('conversation-list-refresh')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        () => { loadConversations() },
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [loadConversations])
 
   function handleSelectConversation(id: string) {
     setSelectedId(id)

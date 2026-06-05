@@ -23,30 +23,36 @@ export async function POST(request: Request) {
   }
 
   // Call Kapso API
-  const kapsoResponse = await fetch(KAPSO_SEND_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': KAPSO_API_KEY,
-    },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to,
-      type: 'text',
-      text: { body: message },
-    }),
-  })
+  let kapsoData: unknown
+  try {
+    const kapsoResponse = await fetch(KAPSO_SEND_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': KAPSO_API_KEY,
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        to,
+        type: 'text',
+        text: { body: message },
+      }),
+    })
 
-  if (!kapsoResponse.ok) {
-    const err = await kapsoResponse.text()
-    console.error('[send] Kapso API error:', kapsoResponse.status, err)
-    return NextResponse.json(
-      { error: 'Failed to send message', detail: err },
-      { status: 502 },
-    )
+    if (!kapsoResponse.ok) {
+      const err = await kapsoResponse.text()
+      console.error('[send] Kapso API error:', kapsoResponse.status, err)
+      return NextResponse.json(
+        { error: 'Failed to send message', detail: err },
+        { status: 502 },
+      )
+    }
+
+    kapsoData = await kapsoResponse.json()
+  } catch (err) {
+    console.error('[send] Kapso fetch error:', err)
+    return NextResponse.json({ error: 'Network error sending message' }, { status: 502 })
   }
-
-  const kapsoData = await kapsoResponse.json()
 
   // Save outbound message to Supabase
   const fromNumber = KAPSO_PHONE_NUMBER_ID
