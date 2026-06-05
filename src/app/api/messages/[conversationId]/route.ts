@@ -17,7 +17,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('messages')
-    .select('id, conversation_id, from_number, to_number, body, direction, timestamp')
+    .select('id, conversation_id, from_number, to_number, body, direction, timestamp, ai_draft, ragie_context, ai_drafted_at')
     .eq('conversation_id', conversationId)
     .order('timestamp', { ascending: true })
 
