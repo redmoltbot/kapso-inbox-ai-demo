@@ -33,8 +33,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  console.log('[webhook] payload:', JSON.stringify(body))
-  waitUntil(processWebhook(body))
+  // Debug: always save raw payload so we can inspect it in Supabase
+  waitUntil((async () => {
+    const supabase = createServerClient()
+    await supabase.from('messages').insert({
+      conversation_id: '_debug',
+      from_number: '_debug',
+      to_number: '_debug',
+      body: JSON.stringify(body),
+      direction: 'inbound',
+      raw: body,
+    })
+    await processWebhook(body)
+  })())
 
   return new NextResponse('OK', { status: 200 })
 }
