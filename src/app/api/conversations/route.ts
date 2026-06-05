@@ -21,12 +21,19 @@ export async function GET() {
     .order('conversation_id', { ascending: true })
     .order('timestamp', { ascending: false })
 
+  // Debug: raw fetch bypass JS client
+  const rawUrl = process.env.SUPABASE_URL?.trim()
+  const rawKey = process.env.SUPABASE_ANON_KEY?.trim()
+  const rawRes = await fetch(`${rawUrl}/rest/v1/messages?select=conversation_id,body&limit=5`, {
+    headers: { apikey: rawKey!, Authorization: `Bearer ${rawKey}` },
+  })
+  const rawData = await rawRes.json()
+
   return NextResponse.json({
     __debug: true,
-    url_len: process.env.SUPABASE_URL?.length,
-    key_len: process.env.SUPABASE_ANON_KEY?.length,
-    url_trimmed: process.env.SUPABASE_URL?.trim(),
-    data,
-    error,
+    supabase_client_data: data,
+    supabase_client_error: error,
+    raw_fetch_status: rawRes.status,
+    raw_fetch_data: rawData,
   })
 }
