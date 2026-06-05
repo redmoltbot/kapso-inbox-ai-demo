@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
+  console.log('[webhook] payload:', JSON.stringify(body))
   waitUntil(processWebhook(body))
 
   return new NextResponse('OK', { status: 200 })
