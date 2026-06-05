@@ -4,5 +4,9 @@ const url = process.env.SUPABASE_URL!
 const key = process.env.SUPABASE_ANON_KEY!
 
 export function createServerClient() {
-  return createClient(url, key)
+  return createClient(url, key, {
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+    },
+  })
 }

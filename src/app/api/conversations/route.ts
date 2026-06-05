@@ -21,19 +21,23 @@ export async function GET() {
     .order('conversation_id', { ascending: true })
     .order('timestamp', { ascending: false })
 
-  // Debug: raw fetch bypass JS client
-  const rawUrl = process.env.SUPABASE_URL?.trim()
-  const rawKey = process.env.SUPABASE_ANON_KEY?.trim()
-  const rawRes = await fetch(`${rawUrl}/rest/v1/messages?select=conversation_id,body&limit=5`, {
-    headers: { apikey: rawKey!, Authorization: `Bearer ${rawKey}` },
-  })
-  const rawData = await rawRes.json()
+  if (error) {
+    console.error('[conversations] query error:', error)
+    return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })
+  }
 
-  return NextResponse.json({
-    __debug: true,
-    supabase_client_data: data,
-    supabase_client_error: error,
-    raw_fetch_status: rawRes.status,
-    raw_fetch_data: rawData,
-  })
+  // Keep only the most recent message per conversation_id
+  const seen = new Set<string>()
+  const conversations: ConversationSummary[] = []
+  for (const row of data ?? []) {
+    if (!seen.has(row.conversation_id)) {
+      seen.add(row.conversation_id)
+      conversations.push(row as ConversationSummary)
+    }
+  }
+
+  // Sort by most recent first
+  conversations.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+
+  return NextResponse.json(conversations)
 }
