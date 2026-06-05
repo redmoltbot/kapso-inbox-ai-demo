@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 import { createServerClient } from '@/lib/supabase-server'
 import { parseWebhookMessages, getConversationId } from '@/lib/utils'
+import { generateAiDraft } from '@/lib/ai-draft'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,8 +22,23 @@ async function processWebhook(raw: unknown): Promise<void> {
     raw,
   }))
 
-  const { error } = await supabase.from('messages').insert(rows)
-  if (error) console.error('[webhook] supabase insert error:', error)
+  const { data: inserted, error } = await supabase
+    .from('messages')
+    .insert(rows)
+    .select('id, body, direction')
+
+  if (error) {
+    console.error('[webhook] supabase insert error:', error)
+    return
+  }
+
+  for (const row of inserted ?? []) {
+    if (row.direction === 'inbound' && row.body) {
+      await generateAiDraft(row.id, row.body).catch((err) =>
+        console.error('[webhook] generateAiDraft failed', err),
+      )
+    }
+  }
 }
 
 export async function POST(request: Request) {
