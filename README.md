@@ -4,6 +4,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 First, run the development server:
 
+Create `.env.local` from `.env.example` and set `INBOX_AUTH_USERNAME` plus `INBOX_AUTH_PASSWORD`. The same variables must be set in Vercel so the inbox UI and internal send/read APIs require Basic Auth.
+
 ```bash
 npm run dev
 # or
