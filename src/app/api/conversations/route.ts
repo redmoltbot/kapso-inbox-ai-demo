@@ -21,25 +21,12 @@ export async function GET() {
     .order('conversation_id', { ascending: true })
     .order('timestamp', { ascending: false })
 
-  console.log('[conversations] data:', JSON.stringify(data), 'error:', JSON.stringify(error), 'url:', process.env.SUPABASE_URL?.length, 'key_len:', process.env.SUPABASE_ANON_KEY?.length)
-
-  if (error) {
-    console.error('[conversations] query error:', error)
-    return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 })
-  }
-
-  // Keep only the most recent message per conversation_id
-  const seen = new Set<string>()
-  const conversations: ConversationSummary[] = []
-  for (const row of data ?? []) {
-    if (!seen.has(row.conversation_id)) {
-      seen.add(row.conversation_id)
-      conversations.push(row as ConversationSummary)
-    }
-  }
-
-  // Sort by most recent first
-  conversations.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-
-  return NextResponse.json(conversations)
+  return NextResponse.json({
+    __debug: true,
+    url_len: process.env.SUPABASE_URL?.length,
+    key_len: process.env.SUPABASE_ANON_KEY?.length,
+    url_trimmed: process.env.SUPABASE_URL?.trim(),
+    data,
+    error,
+  })
 }
