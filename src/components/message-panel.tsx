@@ -142,13 +142,20 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
               {showDraftPanel && (
                 <div className="mt-2 ml-1 max-w-[80%]">
                   {msg.ai_draft ? (
-                    <div className="rounded-lg border border-dashed border-purple-300 bg-purple-50 p-3">
+                    <div
+                      className="rounded-lg border border-dashed p-3"
+                      style={{
+                        backgroundColor: '#e1f2e0',
+                        borderColor: '#299963',
+                      }}
+                    >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-semibold text-purple-700 uppercase tracking-wide">
+                        <span className="text-xs font-semibold text-black uppercase tracking-wide">
                           ✨ AI Draft
                         </span>
                         <button
-                          className="text-xs text-purple-600 underline hover:text-purple-800"
+                          className="text-xs px-2 py-1 rounded font-medium text-black hover:opacity-80 transition-opacity"
+                          style={{ backgroundColor: '#299963', color: '#fff' }}
                           onClick={() => onUseDraft?.(msg.ai_draft!)}
                         >
                           Use Draft
@@ -157,7 +164,8 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
                       <p className="text-sm text-gray-700 whitespace-pre-wrap">{msg.ai_draft}</p>
                       <div className="mt-2 flex justify-end">
                         <button
-                          className="text-xs text-purple-500 underline hover:text-purple-700 disabled:opacity-50"
+                          className="text-xs px-2 py-1 rounded font-medium text-white hover:opacity-80 transition-opacity disabled:opacity-50"
+                          style={{ backgroundColor: '#299963' }}
                           disabled={regenerating === msg.id}
                           onClick={() => handleRegenerate(msg.id)}
                         >
@@ -166,8 +174,14 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
                       </div>
                     </div>
                   ) : (
-                    <div className="rounded-lg border border-dashed border-purple-200 bg-purple-50/50 px-3 py-2">
-                      <span className="text-xs text-purple-400">✨ Drafting reply…</span>
+                    <div
+                      className="rounded-lg border border-dashed px-3 py-2"
+                      style={{
+                        backgroundColor: '#e1f2e0',
+                        borderColor: '#299963',
+                      }}
+                    >
+                      <span className="text-xs font-medium text-black">✨ Drafting reply…</span>
                     </div>
                   )}
                 </div>
