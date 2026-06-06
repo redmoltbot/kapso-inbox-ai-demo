@@ -116,12 +116,12 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
                   className={cn(
                     'max-w-[70%] rounded-lg px-3 py-2 shadow-sm',
                     isOutbound
-                      ? 'text-foreground rounded-br-none'
+                      ? 'text-white rounded-br-none'
                       : 'bg-muted text-foreground rounded-bl-none',
                   )}
                   style={
                     isOutbound
-                      ? { backgroundColor: 'var(--cffy-theme-primary-a20)' }
+                      ? { backgroundColor: '#299963' }
                       : {}
                   }
                 >
