@@ -14,83 +14,142 @@ html, body {
 
 @layer base {
   .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
+    --font-heading: var(--font-google-sans);
+    --font-sans: var(--font-google-sans);
   }
+
+  /* Day mode (light) - dominant */
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    /* Brand colors - Primary (Gold) */
+    --cffy-theme-primary-a0: #bf9000;
+    --cffy-theme-primary-a10: #a67d00;
+    --cffy-theme-primary-a20: #8d6a00;
+    --cffy-theme-primary-a30: #755700;
+    --cffy-theme-primary-a40: #5e4500;
+    --cffy-theme-primary-a50: #483400;
+
+    /* Brand colors - Surface (Greens) */
+    --cffy-theme-surface-a0: #fff;
+    --cffy-theme-surface-a10: #f2f2f2;
+    --cffy-theme-surface-a20: #e4e4e4;
+    --cffy-theme-surface-a30: #d7d7d7;
+    --cffy-theme-surface-a40: #cacaca;
+    --cffy-theme-surface-a50: #bdbdbd;
+
+    /* Brand colors - Surface Tonal */
+    --cffy-theme-surface-tonal-a0: #f9f4ea;
+    --cffy-theme-surface-tonal-a10: #ece8df;
+    --cffy-theme-surface-tonal-a20: #e0dcd4;
+    --cffy-theme-surface-tonal-a30: #d3d0c9;
+    --cffy-theme-surface-tonal-a40: #c7c4be;
+    --cffy-theme-surface-tonal-a50: #bbb8b4;
+
+    /* Brand colors - Status */
+    --cffy-theme-success-a0: #22946e;
+    --cffy-theme-success-a10: #4fa482;
+    --cffy-theme-success-a20: #71b497;
+    --cffy-theme-warning-a0: #a87a2a;
+    --cffy-theme-warning-a10: #b58e4f;
+    --cffy-theme-warning-a20: #c2a16f;
+    --cffy-theme-danger-a0: #9c2121;
+    --cffy-theme-danger-a10: #ae4842;
+    --cffy-theme-danger-a20: #c06961;
+    --cffy-theme-info-a0: #21498a;
+    --cffy-theme-info-a10: #40639c;
+    --cffy-theme-info-a20: #607eae;
+
+    /* Tailwind CSS variables - Light mode */
+    --background: var(--cffy-theme-surface-a0);
+    --foreground: #1a1a1a;
+    --card: var(--cffy-theme-surface-a10);
+    --card-foreground: #1a1a1a;
+    --popover: var(--cffy-theme-surface-a10);
+    --popover-foreground: #1a1a1a;
+    --primary: var(--cffy-theme-primary-a20);
+    --primary-foreground: #fff;
+    --secondary: var(--cffy-theme-success-a0);
+    --secondary-foreground: #fff;
+    --muted: var(--cffy-theme-surface-a30);
+    --muted-foreground: #666;
+    --accent: var(--cffy-theme-primary-a0);
+    --accent-foreground: #1a1a1a;
+    --destructive: var(--cffy-theme-danger-a0);
+    --border: var(--cffy-theme-surface-a20);
+    --input: var(--cffy-theme-surface-a20);
+    --ring: var(--cffy-theme-primary-a20);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
   }
+
+  /* Dark mode */
   .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    /* Brand colors - Primary (Gold) - darker tones for readability */
+    --cffy-theme-primary-a0: #bf9000;
+    --cffy-theme-primary-a10: #c69b37;
+    --cffy-theme-primary-a20: #cca653;
+    --cffy-theme-primary-a30: #d2b26b;
+    --cffy-theme-primary-a40: #d9bd81;
+    --cffy-theme-primary-a50: #dfc897;
+
+    /* Brand colors - Surface (Greens) */
+    --cffy-theme-surface-a0: #0b553d;
+    --cffy-theme-surface-a10: #2b654e;
+    --cffy-theme-surface-a20: #447560;
+    --cffy-theme-surface-a30: #5b8572;
+    --cffy-theme-surface-a40: #719685;
+    --cffy-theme-surface-a50: #88a798;
+
+    /* Brand colors - Surface Tonal */
+    --cffy-theme-surface-tonal-a0: #295b3c;
+    --cffy-theme-surface-tonal-a10: #3e6a4d;
+    --cffy-theme-surface-tonal-a20: #537a5f;
+    --cffy-theme-surface-tonal-a30: #678a72;
+    --cffy-theme-surface-tonal-a40: #7c9a85;
+    --cffy-theme-surface-tonal-a50: #91aa98;
+
+    /* Brand colors - Status */
+    --cffy-theme-success-a0: #22946e;
+    --cffy-theme-success-a10: #5ba989;
+    --cffy-theme-success-a20: #86bfa6;
+    --cffy-theme-warning-a0: #a87a2a;
+    --cffy-theme-warning-a10: #ba945a;
+    --cffy-theme-warning-a20: #cbae84;
+    --cffy-theme-danger-a0: #9c2121;
+    --cffy-theme-danger-a10: #b4544c;
+    --cffy-theme-danger-a20: #ca7f77;
+    --cffy-theme-info-a0: #21498a;
+    --cffy-theme-info-a10: #4b6ca2;
+    --cffy-theme-info-a20: #7590ba;
+
+    /* Tailwind CSS variables - Dark mode */
+    --background: var(--cffy-theme-surface-a0);
+    --foreground: #f0f0f0;
+    --card: var(--cffy-theme-surface-a10);
+    --card-foreground: #f0f0f0;
+    --popover: var(--cffy-theme-surface-a10);
+    --popover-foreground: #f0f0f0;
+    --primary: var(--cffy-theme-primary-a10);
+    --primary-foreground: #1a1a1a;
+    --secondary: var(--cffy-theme-success-a10);
+    --secondary-foreground: #1a1a1a;
+    --muted: var(--cffy-theme-surface-a30);
+    --muted-foreground: #999;
+    --accent: var(--cffy-theme-primary-a0);
+    --accent-foreground: #1a1a1a;
+    --destructive: var(--cffy-theme-danger-a10);
+    --border: var(--cffy-theme-surface-a20);
+    --input: var(--cffy-theme-surface-a20);
+    --ring: var(--cffy-theme-primary-a10);
   }
+
   * {
     @apply border-border;
     outline-color: rgb(from var(--ring) r g b / 0.5);
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

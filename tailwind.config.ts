@@ -66,8 +66,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-google-sans)", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
     },
   },

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { getBrowserClient } from '@/lib/supabase-browser'
 import { cn } from '@/lib/utils'
 
@@ -104,7 +103,7 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
   )
 
   return (
-    <ScrollArea className="flex-1 px-4 py-2">
+    <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-2">
       <div className="flex flex-col gap-2">
         {messages.map((msg, idx) => {
           const isOutbound = msg.direction === 'outbound'
@@ -117,9 +116,14 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
                   className={cn(
                     'max-w-[70%] rounded-lg px-3 py-2 shadow-sm',
                     isOutbound
-                      ? 'bg-[#25D366] text-white rounded-br-none'
-                      : 'bg-gray-100 text-gray-900 rounded-bl-none',
+                      ? 'text-foreground rounded-br-none'
+                      : 'bg-muted text-foreground rounded-bl-none',
                   )}
+                  style={
+                    isOutbound
+                      ? { backgroundColor: 'var(--cffy-theme-primary-a20)' }
+                      : {}
+                  }
                 >
                   <p className="text-sm whitespace-pre-wrap break-words">
                     {msg.body ?? '(no text)'}
@@ -173,6 +177,6 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
         })}
         <div ref={bottomRef} />
       </div>
-    </ScrollArea>
+    </div>
   )
 }
