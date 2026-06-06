@@ -24,10 +24,16 @@ interface MessagePanelProps {
 }
 
 function formatTime(timestamp: string): string {
-  return new Date(timestamp).toLocaleTimeString([], {
+  const date = new Date(timestamp)
+  const dateStr = date.toLocaleDateString([], {
+    day: 'numeric',
+    month: 'short',
+  })
+  const timeStr = date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   })
+  return `${dateStr} ${timeStr}`
 }
 
 export function MessagePanel({ conversationId, initialMessages, onUseDraft }: MessagePanelProps) {
