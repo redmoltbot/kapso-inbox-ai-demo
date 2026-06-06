@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { SendHorizonal } from 'lucide-react'
 
 interface MessageInputProps {
@@ -14,12 +13,12 @@ interface MessageInputProps {
 export function MessageInput({ conversationId, injectedText, onSent }: MessageInputProps) {
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (injectedText) {
       setText(injectedText)
-      inputRef.current?.focus()
+      textareaRef.current?.focus()
     }
   }, [injectedText])
 
@@ -46,11 +45,11 @@ export function MessageInput({ conversationId, injectedText, onSent }: MessageIn
       console.error(err)
     } finally {
       setSending(false)
-      inputRef.current?.focus()
+      textareaRef.current?.focus()
     }
   }
 
-  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       send()
@@ -58,20 +57,21 @@ export function MessageInput({ conversationId, injectedText, onSent }: MessageIn
   }
 
   return (
-    <div className="flex items-center gap-2 p-3 border-t border-border bg-card">
-      <Input
-        ref={inputRef}
+    <div className="flex gap-2 p-3 border-t border-border bg-card">
+      <textarea
+        ref={textareaRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type a message…"
+        placeholder="Type a message… (Shift+Enter for new line)"
         disabled={sending}
-        className="flex-1"
+        className="flex-1 resize-none rounded-lg border border-border bg-background text-foreground p-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        rows={3}
       />
       <Button
         onClick={send}
         disabled={!text.trim() || sending}
-        className="text-white shrink-0"
+        className="text-white shrink-0 self-end"
         style={{ backgroundColor: '#299963' }}
         size="icon"
         aria-label="Send message"

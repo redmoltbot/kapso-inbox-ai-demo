@@ -21,6 +21,7 @@ interface MessagePanelProps {
   conversationId: string
   initialMessages: Message[]
   onUseDraft?: (text: string) => void
+  onSendDraft?: (text: string) => Promise<void>
 }
 
 function formatTime(timestamp: string): string {
@@ -36,9 +37,10 @@ function formatTime(timestamp: string): string {
   return `${dateStr} ${timeStr}`
 }
 
-export function MessagePanel({ conversationId, initialMessages, onUseDraft }: MessagePanelProps) {
+export function MessagePanel({ conversationId, initialMessages, onUseDraft, onSendDraft }: MessagePanelProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [regenerating, setRegenerating] = useState<string | null>(null)
+  const [sendingDraft, setSendingDraft] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -103,6 +105,17 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
     }
   }
 
+  async function handleSendDraft(text: string, messageId: string) {
+    setSendingDraft(messageId)
+    try {
+      await onSendDraft?.(text)
+    } catch (err) {
+      console.error('[send draft] failed', err)
+    } finally {
+      setSendingDraft(null)
+    }
+  }
+
   const lastInboundIndex = messages.reduce(
     (acc, msg, idx) => (msg.direction === 'inbound' ? idx : acc),
     -1,
@@ -159,19 +172,27 @@ export function MessagePanel({ conversationId, initialMessages, onUseDraft }: Me
                         <span className="text-xs font-semibold text-black uppercase tracking-wide">
                           ✨ AI Draft
                         </span>
+                      </div>
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{msg.ai_draft}</p>
+                      <div className="mt-3 flex justify-end gap-2">
                         <button
-                          className="text-xs px-2 py-1 rounded font-medium text-black hover:opacity-80 transition-opacity"
-                          style={{ backgroundColor: '#299963', color: '#fff' }}
+                          className="text-xs px-3 py-1.5 rounded font-medium text-white hover:opacity-80 transition-opacity"
+                          style={{ backgroundColor: '#299963' }}
                           onClick={() => onUseDraft?.(msg.ai_draft!)}
                         >
                           Use Draft
                         </button>
-                      </div>
-                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{msg.ai_draft}</p>
-                      <div className="mt-2 flex justify-end">
                         <button
-                          className="text-xs px-2 py-1 rounded font-medium text-white hover:opacity-80 transition-opacity disabled:opacity-50"
+                          className="text-xs px-3 py-1.5 rounded font-medium text-white hover:opacity-80 transition-opacity disabled:opacity-50"
                           style={{ backgroundColor: '#299963' }}
+                          disabled={sendingDraft === msg.id}
+                          onClick={() => handleSendDraft(msg.ai_draft!, msg.id)}
+                        >
+                          {sendingDraft === msg.id ? 'Sending…' : 'Send'}
+                        </button>
+                        <button
+                          className="text-xs px-3 py-1.5 rounded font-medium text-white hover:opacity-80 transition-opacity disabled:opacity-50"
+                          style={{ backgroundColor: '#999' }}
                           disabled={regenerating === msg.id}
                           onClick={() => handleRegenerate(msg.id)}
                         >

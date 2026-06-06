@@ -84,6 +84,25 @@ export default function InboxPage() {
     setDrawerOpen(false)
   }
 
+  async function handleSendDraft(text: string): Promise<void> {
+    try {
+      const res = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: selectedId, message: text }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(`Send failed: ${data.error ?? 'Unknown error'}`)
+        return
+      }
+      loadConversations()
+    } catch (err) {
+      alert('Network error — check console')
+      console.error(err)
+    }
+  }
+
   return (
     <div className="flex h-full overflow-hidden relative">
 
@@ -148,6 +167,7 @@ export default function InboxPage() {
                 conversationId={selectedId}
                 initialMessages={messages}
                 onUseDraft={(text) => setPendingDraft(text)}
+                onSendDraft={handleSendDraft}
               />
             )}
 
